@@ -38,6 +38,29 @@ def move_file(src, filename):
     else:
         move(src + '\\' + filename, dest)
 
+def getActions:
+    #Returns list of actions as a dictionary from settings file
+    settingsFile = 'settings.txt'
+    list_of_actions = {}
+    
+    with open(settingsFile) as f:
+        index = 0
+        isDest = False
+        isFun = False
+
+        for line in f.readlines():
+            if line.startswith('fun'):
+                fun = line.split("fun: ", 1)[1]
+                isFun = True
+            elif line.startswith('destination'):
+                dest =line.split("destination: ", 1)[1]
+                isDest = True
+            if isDest and isFun:
+                list_of_actions[index]= (fun,dest)
+                isDest = False
+                isFun = False
+    return list_of_actions
+
 
 if __name__ == '__main__':
     _, _, filenames = next(os.walk(source_folder), (None, None, []))
