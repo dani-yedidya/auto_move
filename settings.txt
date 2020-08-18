@@ -1,0 +1,4 @@
+name: exe
+fun: endswith('.exe')
+destination: C:\\users\\user\\desktop\\exe files
+
