@@ -2,29 +2,12 @@ import sys
 import json
 import os
 
-"""
-json format:
-{
-    'endswith': [
-        {
-            'name':'name_str', 
-            'fun': 'fun_str',
-             'destination': 'dest_str'
-        },
-        {same}
-    ],
-    'startwith':
-        [      
-            {same},
-            {and so on}
-        ]
-}
-"""
-
 print('Welcome to settings script.')
-print('1 - view categories ')
+print('1 - view categories and folders ')
 print('2 - add categories ')
 print('3 - delete categories ')
+print('4 - change source folder')
+print('5 - change default destination folder')
 print('0 - end ')
 
 # TODO: matybe we should add a change destination and source folder here.(.py=>.txt)
@@ -38,12 +21,16 @@ varFile = 'variables.py'  # this is for directories
 def write_default():
     if os.stat(settingsFile).st_size == 0:
         with open(settingsFile, 'w')as f:
+            vars = {"source folder": "C:\\Users\\user\\Downloads",
+                    "default destination": "C:\\Users\\user\\Desktop\\dest"}
             base = {
                 "endswith": [
 
                 ],
-                "startswith": []
+                "startswith": [],
+                "vars": vars
             }
+
             json.dump(base, f, indent=4)
 
 
@@ -157,8 +144,26 @@ def runfun(ans):
         add()
     elif ans == 3:
         delete()
+    elif ans == 4:
+        change_dir(1)
+    elif ans == 5:
+        change_dir(2)
     else:
         print('syntax error')
+
+
+def change_dir(type): #type 1- source folder, type 2 - default dest
+    print ("Enter new path: ")
+    path = input()
+    with open(settingsFile, 'r')as f:
+        read = json.load(f)
+    if type == 1:
+        read["vars"]["source folder"] = path
+    elif type == 2:
+        read["vars"]["default destination"] = path
+    with open(settingsFile, 'w')as f:
+        json.dump(read,f,indent=4)
+    print("\n new path is now: "+path)
 
 
 while True:
