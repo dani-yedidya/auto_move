@@ -35,6 +35,18 @@ settingsFile = 'settings.txt'  # this is for categories
 varFile = 'variables.py'  # this is for directories
 
 
+def write_default():
+    if os.stat(settingsFile).st_size == 0:
+        with open(settingsFile, 'w')as f:
+            base = {
+                "endswith": [
+
+                ],
+                "startswith": []
+            }
+            json.dump(base, f, indent=4)
+
+
 def end():
     print('End')
     sys.exit()
@@ -43,6 +55,7 @@ def end():
 def view():
     try:
         with open(settingsFile, 'r') as f:
+            write_default()
             read = json.load(f)
             print(json.dumps(read, indent=4))
     except(FileNotFoundError):
@@ -55,7 +68,7 @@ def view():
 def add():
     print('Enter name of function you want to add:')  # add e.g.
     name = input()
-
+    write_default()
     # search for name to avoid duplicates:
     isThereDup = False
     with open(settingsFile) as myFile:  # should we change to f like in view function?
@@ -83,24 +96,16 @@ def add():
             except:
                 pass
         if num == 1:
-            type_options = {1: 'exe', 2: 'mp4', 3: 'jpg', 4: 'pdf'}  # same as above
-            print("Choose function:")
-            for k, v in type_options.items():
-                print(k, "-", v)  # print all type options
-            print("Enter numbers only:")
-            while True:
-                try:
-                    type = int(input())
-                    if type in type_options:
-                        break
-                    else:
-                        print("Invalid input")
-                except:
-                    pass  # till here same
+            print("Type file ending:")
+            type = input()
+
+
         elif num == 2:
-            pass  # need to add options for startswith
+            print("Type beginning of file name:")
+            type = input()
+
         fun = fun_options[num]
-        full_function = fun + "(." + type_options[type] + ")"
+        full_function = fun + "(." + type + ")"
 
         print(r"Enter destination (e.g: C:\\Users\\yedid\\OneDrive\\Documents):")
         des = input()
@@ -118,11 +123,15 @@ def add():
 
 
 def delete():
-    print('Enter name of function you want to delete: ')
-    name = input()
-
+    write_default()
     with open(settingsFile, 'r') as read_file:
         f = json.load(read_file)
+        if not f["endswith"] and not f["startswith"]:
+            print("nothing to delete")
+            return
+        else:
+            print('Enter name of function you want to delete: ')
+            name = input()
     deleted = False
     for category, functions in f.items():
         for num, function in enumerate(functions):

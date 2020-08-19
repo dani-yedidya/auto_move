@@ -1,8 +1,10 @@
-name: exe
-fun: endswith('exe')
-destination: C:\\users\\user\\desktop\\exe files
-
-name: text
-fun: endswith('.txt')
-destination: C:\\Users\\user\\Desktop\\text files
-
+{
+    "endswith": [
+        {
+            "name": "coollll",
+            "fun": "endswith(.exe)",
+            "destination": "C:\\\\"
+        }
+    ],
+    "startswith": []
+}
