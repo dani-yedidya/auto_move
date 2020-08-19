@@ -1,0 +1,10 @@
+{
+    "endswith": [
+        {
+            "name": "1",
+            "fun": "endswith(.exe)",
+            "destination": "1"
+        }
+    ],
+    "startswith": []
+}

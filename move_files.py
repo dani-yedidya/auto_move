@@ -20,20 +20,22 @@ def sivug(file_name: str):
     the types are keys in variables dictionary
     where the values are the folder locations
 
-        if file_name.startswith("Discount"):
+    if file_name.startswith("Discount"):
         return 'bank'
     if file_name.endswith(".exe"):
-        return 'exe'0
+        return 'exe'
     if file_name.startswith("WhatsApp Image"):
         return 'WhatsApp Image'
     if file_name.endswith(".mp4"):
-        return
+        return 'movie'
     """
     endswithDic = get_endsWith() #get endswith functions dict from settings file
     startswithDic = get_startsWith() #get startswith functions dict from settings file
 
     for category in endswithDic: #loop through categories in dic and check if one is מתאים
-        if file_name.endswith(endswithDic[category][0]):
+        if file_name.endswith(endswithDic[category][0]): # not using dic well. needs editing once functions bellow
+            # are fixed
+            # including congfic file
             return endswithDic[category][1].split('\n')[0]
     for category in startswithDic:
         if file_name.startswith(endswithDic[category][0]):
