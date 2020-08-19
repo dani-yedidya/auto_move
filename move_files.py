@@ -29,18 +29,16 @@ def sivug(file_name: str):
     if file_name.endswith(".mp4"):
         return
     """
-    endswithDic = get_endsWith() #get endswith functions dict from settings file
-    startswithDic = get_startsWith() #get startswith functions dict from settings file
+    endswithDic = get_endsWith()  # get endswith functions dict from settings file
+    startswithDic = get_startsWith()  # get startswith functions dict from settings file
 
-    for category in endswithDic: #loop through categories in dic and check if one is מתאים
+    for category in endswithDic:  # loop through categories in dic and check if one is מתאים
         if file_name.endswith(endswithDic[category][0]):
             return endswithDic[category][1].split('\n')[0]
     for category in startswithDic:
         if file_name.startswith(endswithDic[category][0]):
             return endswithDic[category][1].split('\n')[0]
-    return destination# if nothing was found מתאים default destination
-
-
+    return destination  # if nothing was found מתאים default destination
 
 
 def move_file(src, filename):
@@ -57,21 +55,21 @@ def get_endsWith():
     settingsFile = 'settings.txt'
     endsWithDic = {}
 
-    with open(settingsFile) as f: #closes file after use
-        index = 0 # index is used to run through the loop
-        isDest = False #boolean used to check if found a destination
-        isFun = False #boolean used to check if found a function
+    with open(settingsFile) as f:  # closes file after use
+        index = 0  # index is used to run through the loop
+        isDest = False  # boolean used to check if found a destination
+        isFun = False  # boolean used to check if found a function
 
-        for line in f.readlines(): #runs through the file line by line
+        for line in f.readlines():  # runs through the file line by line
             if line.startswith('fun: endswith'):
-                fun = line.split("fun: endswith('", 1)[1].split("')")[0] #will return only whats within the ()
-                isFun = True #found function that fits
-            if line.startswith('destination')and isFun: #Called only if there was a function that fits
-                dest = line.split("destination: ", 1)[1] # will return only destination without 'destination: '
-                isDest = True #found destination that fits
+                fun = line.split("fun: endswith('", 1)[1].split("')")[0]  # will return only whats within the ()
+                isFun = True  # found function that fits
+            if line.startswith('destination') and isFun:  # Called only if there was a function that fits
+                dest = line.split("destination: ", 1)[1]  # will return only destination without 'destination: '
+                isDest = True  # found destination that fits
             if isDest and isFun:
-                endsWithDic[index] = (fun, dest) # adds to ends with dictionary
-                isDest = False #resets values
+                endsWithDic[index] = (fun, dest)  # adds to ends with dictionary
+                isDest = False  # resets values
                 isFun = False
                 index += 1
 
@@ -93,7 +91,7 @@ def get_startsWith():
             if line.startswith('fun: startsWith'):
                 fun = line.split("fun: startsWith('", 1)[1].split("')")[0]
                 isFun = True
-            if line.startswith('destination')and isFun:
+            if line.startswith('destination') and isFun:
                 dest = line.split("destination: ", 1)[1]
                 isDest = True
             if isDest and isFun:
