@@ -2,20 +2,26 @@ import sys
 import json
 import os
 
-print('Welcome to settings script.')
-print('1 - view categories and folders ')
-print('2 - add categories ')
-print('3 - delete categories ')
-print('4 - change source folder')
-print('5 - change default destination folder')
-print('0 - end ')
-
 # TODO: matybe we should add a change destination and source folder here.(.py=>.txt)
 # TODO: make it easier to change without needing to know how to code.
 
 
 settingsFile = 'settings.txt'  # this is for categories
 varFile = 'variables.py'  # this is for directories
+
+
+def print_menu():
+    print('\n\nWelcome to settings script.')
+    print('1 - view categories and folders ')
+    print('2 - add categories ')
+    print('3 - delete categories ')
+    print('4 - change source folder')
+    print('5 - change default destination folder')
+    print('9 - reset all.')
+    print('0 - end ')
+
+
+print_menu()
 
 
 def write_default():
@@ -61,9 +67,10 @@ def add():
     with open(settingsFile) as myFile:  # should we change to f like in view function?
         f = json.load(myFile)
         for category, functions in f.items():
-            for function in functions:
-                if function['name'] == name:
-                    isThereDup = True
+            if category != "vars":
+                for function in functions:
+                    if function['name'] == name:
+                        isThereDup = True
     if isThereDup:
         print('There is already a function named ' + name + '\n')
         add()  # אהבתי
@@ -148,12 +155,15 @@ def runfun(ans):
         change_dir(1)
     elif ans == 5:
         change_dir(2)
+    elif ans == 9:
+        reset_all()
     else:
         print('syntax error')
+    print_menu()
 
 
-def change_dir(type): #type 1- source folder, type 2 - default dest
-    print ("Enter new path: ")
+def change_dir(type):  # type 1- source folder, type 2 - default dest
+    print("Enter new path: ")
     path = input()
     with open(settingsFile, 'r')as f:
         read = json.load(f)
@@ -162,8 +172,24 @@ def change_dir(type): #type 1- source folder, type 2 - default dest
     elif type == 2:
         read["vars"]["default destination"] = path
     with open(settingsFile, 'w')as f:
-        json.dump(read,f,indent=4)
-    print("\n new path is now: "+path)
+        json.dump(read, f, indent=4)
+    print("\n new path is now: " + path)
+
+
+def reset_all():
+    print("are you sure? all categories will be deleted permanently.")
+    print("enter y/n: ")
+    answer = input()
+    if answer == 'y':
+        write_default()
+        print("all settings deleted")
+        return
+    elif answer == 'n':
+        print("few! you scared me there.")
+        return
+    else:
+        print("syntax error. ")
+        reset_all()
 
 
 while True:
