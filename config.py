@@ -1,4 +1,25 @@
-import  sys
+import sys
+import json
+import os
+
+"""
+json format:
+{
+    'endswith': [
+        {
+            'name':'name_str', 
+            'fun': 'fun_str',
+             'destination': 'dest_str'
+        },
+        {same}
+    ],
+    'startwith':
+        [      
+            {same},
+            {and so on}
+        ]
+}
+"""
 
 print('Welcome to settings script.')
 print('1 - view categories ')
@@ -6,8 +27,8 @@ print('2 - add categories ')
 print('3 - delete categories ')
 print('0 - end ')
 
-#TODO: matybe we should add a change destination and source folder here.(.py=>.txt)
-#TODO: make it easier to change without needing to know how to code.
+# TODO: matybe we should add a change destination and source folder here.(.py=>.txt)
+# TODO: make it easier to change without needing to know how to code.
 
 
 settingsFile = 'settings.txt'  # this is for categories
@@ -19,11 +40,11 @@ def end():
     sys.exit()
 
 
-
 def view():
     try:
         with open(settingsFile, 'r') as f:
-            print(f.read())
+            read = json.load(f)
+            print(json.dumps(read, indent=4))
     except(FileNotFoundError):
         print('file not found')
         file = open(settingsFile, 'a+')
@@ -32,28 +53,68 @@ def view():
 
 
 def add():
-    print('Enter name of function you want to add:')
+    print('Enter name of function you want to add:')  # add e.g.
     name = input()
 
     # search for name to avoid duplicates:
     isThereDup = False
-    with open(settingsFile) as myFile:
-        for num, line in enumerate(myFile, 1):  # why enumerate?? (y.t)
-            if name in line:
-                isThereDup = True
+    with open(settingsFile) as myFile:  # should we change to f like in view function?
+        f = json.load(myFile)
+        for category, functions in f.items():
+            for function in functions:
+                if function['name'] == name:
+                    isThereDup = True
     if isThereDup:
         print('There is already a function named ' + name + '\n')
         add()  # אהבתי
     else:
-        print("Enter function (e.g: endswith('.exe')")
-        fun = input()
-        print("Enter destination (e.g: C:\\Users\\yedid\\OneDrive\\Documents")
+        fun_options = {1: 'endswith', 2: 'startswith'}  # **can add more options if we use more functions, like regex**
+        print("Choose function:")
+        for k, v in fun_options.items():
+            print(k, "-", v)  # print all function options
+        print("Enter numbers only:")
+        while True:
+            try:
+                num = int(input())
+                if num in fun_options:  # meaning if input is 1 or 2, for now
+                    break
+                else:
+                    print("Invalid input")
+            except:
+                pass
+        if num == 1:
+            type_options = {1: 'exe', 2: 'mp4', 3: 'jpg', 4: 'pdf'}  # same as above
+            print("Choose function:")
+            for k, v in type_options.items():
+                print(k, "-", v)  # print all type options
+            print("Enter numbers only:")
+            while True:
+                try:
+                    type = int(input())
+                    if type in type_options:
+                        break
+                    else:
+                        print("Invalid input")
+                except:
+                    pass  # till here same
+        elif num == 2:
+            pass  # need to add options for startswith
+        fun = fun_options[num]
+        full_function = fun + "(." + type_options[type] + ")"
+
+        print(r"Enter destination (e.g: C:\\Users\\yedid\\OneDrive\\Documents):")
         des = input()
-        # creates a function with name and function
-        action = 'name: ' + name + '\nfun: ' + fun + '\n' + 'destination: ' + des + '\n\n'
-        f = open(settingsFile, 'a')
-        f.write(action)
-        print('added ' + action)
+        action = {'name': name, 'fun': full_function, 'destination': des}
+
+        with open(settingsFile, 'r') as f:  # open file and edit settings
+            settings_json = json.load(f)
+            if fun in settings_json:
+                settings_json[fun].append(action)
+        os.remove(settingsFile)
+
+        with open(settingsFile, 'w') as f:  # update settings file and print added function
+            json.dump(settings_json, f, indent=4)
+            print("Added: ", settings_json[fun][-1])
 
 
 def delete():
@@ -61,25 +122,21 @@ def delete():
     name = input()
 
     with open(settingsFile, 'r') as read_file:
-        lines = read_file.readlines()
-    index = 0
-
+        f = json.load(read_file)
     deleted = False
-    for line in lines:
-        if line == 'name: ' + name + '\n':
-            del lines[index]  # why not shorten to [index:index+3]
-            del lines[index]
-            del lines[index]
-            deleted = True
-        index += 1
-    with open(settingsFile, 'w+') as write_file:
-        for line in lines:
-            write_file.write(line)  # what are you writing here?
+    for category, functions in f.items():
+        for num, function in enumerate(functions):
+            if function['name'] == name:
+                del functions[num]
+                deleted = True
     if deleted:
-        print('\ndeleted ' + name)
+        os.remove(settingsFile)
+        with open(settingsFile, 'w+') as write_file:
+            json.dump(f, write_file, indent=4)
+
+        print('\nDeleted ' + name)
     else:
         print(name + ' not found')
-
 
 
 def runfun(ans):
