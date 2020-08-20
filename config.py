@@ -25,6 +25,7 @@ print_menu()
 
 
 def write_default():
+    open(settingsFile, 'a').close()
     if os.stat(settingsFile).st_size == 0:
         with open(settingsFile, 'w')as f:
             vars = {"source folder": "C:\\Users\\user\\Downloads",
@@ -46,16 +47,11 @@ def end():
 
 
 def view():
-    try:
-        with open(settingsFile, 'r') as f:
-            write_default()
-            read = json.load(f)
-            print(json.dumps(read, indent=4))
-    except(FileNotFoundError):
-        print('file not found')
-        file = open(settingsFile, 'a+')
-        file.write("")
-        file.close()
+    with open(settingsFile, 'r') as f:
+        write_default()
+        read = json.load(f)
+        print(json.dumps(read, indent=4))
+
 
 
 def add():
@@ -101,7 +97,7 @@ def add():
         fun = fun_options[num]
         full_function = fun + "(." + type + ")"
 
-        print(r"Enter destination (e.g: C:\\Users\\yedid\\OneDrive\\Documents):")
+        print("Enter destination (e.g: C:\\Users\\yedid\\OneDrive\\Documents):")
         des = input()
         action = {'name': name, 'fun': full_function, 'destination': des}
 
@@ -113,7 +109,7 @@ def add():
 
         with open(settingsFile, 'w') as f:  # update settings file and print added function
             json.dump(settings_json, f, indent=4)
-            print("Added: ", settings_json[fun][-1])
+            print("Added: ", settings_json[fun][-1]) # show last funtion in list
 
 
 def delete():
@@ -162,8 +158,8 @@ def runfun(ans):
     print_menu()
 
 
-def change_dir(type):  # type 1- source folder, type 2 - default dest
-    print("Enter new path: ")
+def change_dir(type):  # type 1 - source folder, type 2 - default dest
+    print("Enter new path (e.g: C:\\Users\\yedid\\OneDrive\\Documents): ")
     path = input()
     with open(settingsFile, 'r')as f:
         read = json.load(f)
@@ -173,7 +169,7 @@ def change_dir(type):  # type 1- source folder, type 2 - default dest
         read["vars"]["default destination"] = path
     with open(settingsFile, 'w')as f:
         json.dump(read, f, indent=4)
-    print("\n new path is now: " + path)
+    print("\nnew path is now: " + path)
 
 
 def reset_all():
@@ -181,6 +177,10 @@ def reset_all():
     print("enter y/n: ")
     answer = input()
     if answer == 'y':
+        try:
+            os.remove(settingsFile)
+        except FileNotFoundError:
+            pass
         write_default()
         print("all settings deleted")
         return

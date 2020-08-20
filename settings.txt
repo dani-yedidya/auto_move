@@ -1,0 +1,14 @@
+{
+    "endswith": [
+        {
+            "name": "q",
+            "fun": "endswith(.q)",
+            "destination": "S"
+        }
+    ],
+    "startswith": [],
+    "vars": {
+        "source folder": "C:\\Users\\user\\Downloads",
+        "default destination": "C:\\Users\\user\\Desktop\\dest"
+    }
+}
