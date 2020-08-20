@@ -1,9 +1,9 @@
 {
     "endswith": [
         {
-            "name": "movies",
-            "key": ".mp4",
-            "destination": "C:\\movies"
+            "name": "pictures",
+            "key": ".jpg",
+            "destination": "C:\\Users\\yedid\\OneDrive\\Pictures"
         }
     ],
     "startswith": [
@@ -14,7 +14,7 @@
         }
     ],
     "vars": {
-        "source folder": "C:\\Users\\yedid\\OneDrive\\python\\automation\\playground",
-        "default destination": "C:\\Users\\yedid\\OneDrive\\python\\automation\\playground"
+        "source folder": "C:\\Users\\yedid\\Downloads",
+        "default destination": "C:\\Users\\yedid\\Downloads"
     }
 }

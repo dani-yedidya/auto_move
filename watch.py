@@ -5,9 +5,8 @@ from watchdog.events import PatternMatchingEventHandler
 from move_files import *
 
 
-
 def on_created(event):
-    file_name = event.src_path.split("\\")[1] # gets file name from event called by observer
+    file_name = event.src_path.split("\\")[-1]  # gets file name from event called by observer
     move_file(source_folder, file_name)
 
 
@@ -22,8 +21,8 @@ if __name__ == "__main__":
     my_event_handler.on_created = on_created
 
     # create an observer:
-    path = "C://Users//user//Downloads"
-    go_recursively = True # monitor also sub-directories
+    path = source_folder
+    go_recursively = True  # monitor also sub-directories
     my_observer = Observer()
     my_observer.schedule(my_event_handler, path, recursive=go_recursively)
 
