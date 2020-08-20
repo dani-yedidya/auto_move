@@ -1,7 +1,12 @@
-import os
+import os, json
 from shutil import move
-from variables import *
 
+
+setting_file = "settings.txt"
+with open(setting_file, 'r') as f:
+    settings = json.load(f)
+    source_folder = settings['vars']['source folder']
+    destination = settings['vars']['default destination']
 
 def sivug(file_name: str):
     """
@@ -10,7 +15,7 @@ def sivug(file_name: str):
 
     TO DO: we should try to make this generic!!
     maybe with another variables dictionary,
-    maybe with a seperate function for each type, and this function should just call
+    maybe with a separate function for each type, and this function should just call
     the function by filename.
     ***other option***: this functions is moved to a user specific file and
     is changed to fit user. because it is not complex.
@@ -19,47 +24,35 @@ def sivug(file_name: str):
     :return: type of file for relocation: str
     the types are keys in variables dictionary
     where the values are the folder locations
-    """
+
     if file_name.startswith("Discount"):
         return 'bank'
     if file_name.endswith(".exe"):
-        return 'exe'
+        return 'exe'0
     if file_name.startswith("WhatsApp Image"):
         return 'WhatsApp Image'
     if file_name.endswith(".mp4"):
         return
+    """
+    with open(setting_file, 'r') as f:
+        settings = json.load(f)
+        endswithDic = settings['endswith']  # get endswith functions dict from settings file
+        startswithDic = settings['startswith']  # get startswith functions dict from settings file
+
+    for function in endswithDic:  # loop through categories in dic and check if one is מתאים
+        if file_name.endswith(function['key']): # need to change config. fun --> type,
+            # and make it not have words 'endswith' and 'startswith' in the function itself.
+            return function['destination']
+    for function in startswithDic:
+        if file_name.startswith(function['key']):
+            return function['destination']
+    return destination  # if nothing was found מתאים default destination
 
 
 def move_file(src, filename):
-    try:
-        dest = destinations[sivug(filename)]
-    except KeyError:
-        pass
-    else:
+    dest = sivug(filename)
+    if dest != source_folder:
         move(src + '\\' + filename, dest)
-
-def getActions:
-    #Returns list of actions as a dictionary from settings file
-    settingsFile = 'settings.txt'
-    list_of_actions = {}
-    
-    with open(settingsFile) as f:
-        index = 0
-        isDest = False
-        isFun = False
-
-        for line in f.readlines():
-            if line.startswith('fun'):
-                fun = line.split("fun: ", 1)[1]
-                isFun = True
-            elif line.startswith('destination'):
-                dest =line.split("destination: ", 1)[1]
-                isDest = True
-            if isDest and isFun:
-                list_of_actions[index]= (fun,dest)
-                isDest = False
-                isFun = False
-    return list_of_actions
 
 
 if __name__ == '__main__':
