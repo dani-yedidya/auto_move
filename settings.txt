@@ -1,14 +1,20 @@
 {
     "endswith": [
         {
-            "name": "q",
-            "fun": "endswith(.q)",
-            "destination": "S"
+            "name": "movies",
+            "key": ".mp4",
+            "destination": "C:\\movies"
         }
     ],
-    "startswith": [],
+    "startswith": [
+        {
+            "name": "WhatsApp",
+            "key": "WhatsApp",
+            "destination": "C:\\Users\\yedid\\OneDrive\\Desktop\\test"
+        }
+    ],
     "vars": {
-        "source folder": "C:\\Users\\user\\Downloads",
-        "default destination": "C:\\Users\\user\\Desktop\\dest"
+        "source folder": "C:\\Users\\yedid\\OneDrive\\python\\automation\\playground",
+        "default destination": "C:\\Users\\yedid\\OneDrive\\python\\automation\\playground"
     }
 }

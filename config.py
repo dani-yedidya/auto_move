@@ -2,12 +2,11 @@ import sys
 import json
 import os
 
-# TODO: matybe we should add a change destination and source folder here.(.py=>.txt)
-# TODO: make it easier to change without needing to know how to code.
+# TODO: matybe we should add a change destination and source folder here.(.py=>.txt). DONE
+# TODO: make it easier to change without needing to know how to code. DONE
 
 
 settingsFile = 'settings.txt'  # this is for categories
-varFile = 'variables.py'  # this is for directories
 
 
 def print_menu():
@@ -87,19 +86,18 @@ def add():
                 pass
         if num == 1:
             print("Type file ending:")
-            type = input()
+            type = "."+input()
 
 
         elif num == 2:
-            print("Type beginning of file name:")
+            print("Type beginning of file name. Please be accurate:")
             type = input()
 
         fun = fun_options[num]
-        full_function = fun + "(." + type + ")"
 
         print("Enter destination (e.g: C:\\Users\\yedid\\OneDrive\\Documents):")
         des = input()
-        action = {'name': name, 'fun': full_function, 'destination': des}
+        action = {'name': name, 'key': type, 'destination': des}
 
         with open(settingsFile, 'r') as f:  # open file and edit settings
             settings_json = json.load(f)
@@ -124,10 +122,11 @@ def delete():
             name = input()
     deleted = False
     for category, functions in f.items():
-        for num, function in enumerate(functions):
-            if function['name'] == name:
-                del functions[num]
-                deleted = True
+        if category != "vars":
+            for num, function in enumerate(functions):
+                if function['name'] == name:
+                    del functions[num]
+                    deleted = True
     if deleted:
         os.remove(settingsFile)
         with open(settingsFile, 'w+') as write_file:
