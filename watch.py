@@ -1,16 +1,28 @@
 import time
 from watchdog.observers import Observer
 from watchdog.events import PatternMatchingEventHandler
-
-from move_files import *
+# from move_files import *
+""" move_files is the original program. If there is no need to rename file, use this import and
+comment out sefaria"""
+from sefaria import *
 
 
 def on_created(event):
+    """
+    :param event: watchdogevent type
+
+    get file name from event, then runs move file function from move_files/sefaria
+    """
+
     file_name = event.src_path.split("\\")[-1]  # gets file name from event called by observer
     move_file(source_folder, file_name)
 
 
-if __name__ == "__main__":
+def main():
+    """
+    the watchdog checks source folder for created file.
+    when created, runs on_created function above
+    """
     patterns = "*"  # patterns is what files to handle.
     ignore_patterns = ""
     ignore_directories = False
@@ -33,3 +45,7 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         my_observer.stop()
         my_observer.join()
+
+
+if __name__ == "__main__":
+    main()

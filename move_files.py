@@ -1,12 +1,13 @@
-import os, json
+import json
+import os
 from shutil import move
-
 
 setting_file = "settings.txt"
 with open(setting_file, 'r') as f:
     settings = json.load(f)
     source_folder = settings['vars']['source folder']
     destination = settings['vars']['default destination']
+
 
 def sivug(file_name: str):
     """
@@ -36,17 +37,17 @@ def sivug(file_name: str):
     """
     with open(setting_file, 'r') as f:
         settings = json.load(f)
-        endswithDic = settings['endswith']  # get endswith functions dict from settings file
-        startswithDic = settings['startswith']  # get startswith functions dict from settings file
+        endswith_dic = settings['endswith']  # get endswith functions dict from settings file
+        startswith_dic = settings['startswith']  # get startswith functions dict from settings file
 
-    for function in endswithDic:  # loop through categories in dic and check if one is מתאים
-        if file_name.endswith(function['key']): # need to change config. fun --> type,
+    for function in endswith_dic:  # loop through categories in dic and check if one is מתאים
+        if file_name.endswith(function['key']):  # need to change config. fun --> type,
             # and make it not have words 'endswith' and 'startswith' in the function itself.
             return function['destination']
-    for function in startswithDic:
+    for function in startswith_dic:
         if file_name.startswith(function['key']):
             return function['destination']
-    return destination  # if nothing was found מתאים default destination
+    return destination  # if nothing was found מתאים  - default destination
 
 
 def move_file(src, filename):
@@ -55,7 +56,7 @@ def move_file(src, filename):
         move(src + '\\' + filename, dest)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # goes over all files in source folder. not involving watchdog
     _, _, filenames = next(os.walk(source_folder), (None, None, []))
     for file in filenames:
         move_file(source_folder, file)
