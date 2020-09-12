@@ -1,6 +1,7 @@
 import json
 import os
 from shutil import move
+from os import path
 
 setting_file = "settings.txt"
 with open(setting_file, 'r') as f:
@@ -52,9 +53,22 @@ def sivug(file_name: str):
 
 def move_file(src, filename):
     dest = sivug(filename)
+    # Check if there is already a file like this
+    filename = renameIfNecesary(src,dest,filename)
     if dest != source_folder:
         move(src + '\\' + filename, dest)
+def renameIfNecesary(dir_src,dir_dest,oldfilename):
+    newfilename = oldfilename
+    index = 1
 
+    while True:
+        if (path.exists(dir_src+'\\'+newfilename) or path.exists(dir_dest+'\\'+newfilename)):
+            newfilename = os.path.splitext(oldfilename)[0] + '(' + str(index) + ')' +os.path.splitext(oldfilename)[1]
+            index += 1
+        else:
+            break
+    os.rename(dir_src+'\\'+oldfilename, dir_src+'\\'+newfilename)
+    return newfilename
 
 if __name__ == '__main__':  # goes over all files in source folder. not involving watchdog
     _, _, filenames = next(os.walk(source_folder), (None, None, []))
