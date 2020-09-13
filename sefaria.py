@@ -1,6 +1,4 @@
-import urllib.request, urllib.parse, urllib.error
-import json
-import ssl
+import requests
 from shutil import move
 import move_files
 from move_files import source_folder
@@ -14,21 +12,10 @@ def daf_yomi():
     :return: str: today's daf yomi
     '''
     url = 'http://www.sefaria.org/api/calendars'
+    requests.packages.urllib3.disable_warnings()
+    data = requests.get(url, verify=False).json()
 
-    # Ignore SSL certificate errors
-    ctx = ssl.create_default_context()
-    ctx.check_hostname = False
-    ctx.verify_mode = ssl.CERT_NONE
-
-    uh = urllib.request.urlopen(url, context=ctx)
-    data = uh.read().decode()
-
-    try:
-        js = json.loads(data)
-    except:
-        js = None
-
-    page = js['calendar_items'][2]['ref'][:-1]
+    page = data['calendar_items'][2]['ref'][:-1]
 
     return page
 
@@ -88,35 +75,32 @@ class Entry_Box(tk.Frame):
         self.root.destroy()
 
 
-def elis_sivug(func, GUI):  # decorator for sivug function
+def elis_sivug(func):  # decorator for sivug function
     '''
 
     :param func: sivug function (move_files.py)
-    :param GUI: tkinter frame. needed to be here so we can run GUI functions.
-    might not need to be here. maybe functions should be static, not needing Entry_Box object.
-
     :return: str: destinanion folder, or in case of WhatsApp audio - destinaion filename (whole path).
     '''
     def wrapper(*args, **kwargs):
         dest_file = func(*args, **kwargs)
         if args[0].endswith('.ogg') and args[0].startswith('WhatsApp'):
+            root = tk.Tk()
+            root.title("Confirmation")
+            root.minsize(150, 50)
+            GUI = Entry_Box(root)
             GUI.confirmation()
             GUI.root.mainloop()
             daf = Entry_Box.string  # getting todays page from sefaria
             return  dest_file + '\\' + daf + '.ogg'  # renaming file. should add confirmation GUI
         else:
             return dest_file
-    GUI.root.quit()
     return wrapper
 
 
 
-def move_file(src, filename): # new function to use decorated sivug
-    root = tk.Tk()
-    root.title("Confirmation")
-    root.minsize(150, 50)
-    a = Entry_Box(root)
-    sivug = elis_sivug(move_files.sivug, a)  # decorating the sivug function
+def move_file(src, filename): # new function to use decorated sivug, create tkinter GUI
+
+    sivug = elis_sivug(move_files.sivug)  # decorating the sivug function
     dest = sivug(filename)
     if dest != source_folder:
         move(src + '\\' + filename, dest)
@@ -124,4 +108,5 @@ def move_file(src, filename): # new function to use decorated sivug
 
 
 
-
+if __name__ == '__main__':
+    print(daf_yomi())
