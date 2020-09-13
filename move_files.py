@@ -66,7 +66,7 @@ def renameIfNecesary(dir_src,dir_dest,oldfilename):
     if (path.exists(dir_dest+'\\'+newfilename)):
         while True:
             if (path.exists(dir_src+'\\'+newfilename) or path.exists(dir_dest+'\\'+newfilename)):
-                newfilename = os.path.splitext(oldfilename)[0] + '(' + str(index) + ')' +os.path.splitext(oldfilename)[1]
+                newfilename = os.path.splitext(oldfilename)[0] + ' (' + str(index) + ')' +os.path.splitext(oldfilename)[1]
                 index += 1
             else:
                 break
