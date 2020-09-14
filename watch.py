@@ -2,25 +2,55 @@ import time
 from watchdog.observers import Observer
 from watchdog.events import PatternMatchingEventHandler
 from move_files import *
+
 """ move_files is the original program. If there is no need to rename file, use this import and
 comment out sefaria"""
-#from sefaria import *
+
+
+# from sefaria import *
+# life cycle of chrome/firfox file:
+# 1. created sample.crdownload file (oncreated called, but nothing happens cause of 'if' statement)
+# 2. moved: src= sample.crdownload, dest = sample.temp  (onmoved called, but nothing happens cause of 'if' statement)
+# 3. moved: src= sample.temp, dest = sample.pdf  (onmoved called, sends to move fun of dest path)
+# 4. move_file of move_files.py called.
+
+# life cycle of regular downloads:
+# 1. created sample.pdf (oncreate called, sends to move fun of src path)
+# 2. move_file of move_files.py called.
 
 
 def on_created(event):
+    # check if file is a temp file, and do nothing if so.
+    if str(event.src_path).endswith((".crdownload", ".tmp")):
+        return
+    move(event.src_path) #calls the move function with path
+
     """
     :param event: watchdogevent type
 
     get file name from event, then runs move file function from move_files/sefaria
     """
-    if os.path.isdir(event.src_path): #Don't do anything if file is a folder.
+
+
+
+def on_moved(event):
+    # check if file is a temp file, and do nothing if so.
+    if str(event.dest_path).endswith((".crdownload", ".tmp")):
+        return
+    move(event.dest_path) #Calls the move fun with DEST. this is because it is called AFTER it moved.
+
+def move(src_path):
+    #this function moves file using move_file.py
+    # PARAMS : path of file that is defined by event
+
+    if os.path.isdir(src_path):  # Don't do anything if file is a folder.
         return
     time.sleep(1)
-    file_name = event.src_path.split("\\")[-1]  # gets file name from event called by observer
+    file_name = src_path.split("\\")[-1]  # gets file name from event called by observer
     move_file(source_folder, file_name)
 
-def on_modified(event):
-    on_created(event)
+
+
 def main():
     """
     the watchdog checks source folder for created file.
@@ -34,7 +64,7 @@ def main():
     my_event_handler = PatternMatchingEventHandler(patterns, ignore_patterns, ignore_directories, case_sensitive)
     # initialize all events according to functions we made:
     my_event_handler.on_created = on_created
-    my_event_handler.on_modified = on_modified
+    my_event_handler.on_moved = on_moved
 
     # create an observer:
     path = source_folder

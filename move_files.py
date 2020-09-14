@@ -53,13 +53,11 @@ def sivug(file_name: str):
 
 def move_file(src, filename):
     dest = sivug(filename)
-    #check if file is a temp file, and do nothing if so, this will call the on_modified fun in watch when renamed.
-    if (filename.endswith('.tmp') or filename.endswith('.crdownload')):
-        return
+
     # Check if there is already a file like this
-    filename = renameIfNecesary(src,dest,filename)
+    newfilename = renameIfNecesary(src,dest,filename)
     if dest != source_folder:
-        move(src + '\\' + filename, dest)
+        move(src + '\\' + filename, dest+'\\'+newfilename)
 def renameIfNecesary(dir_src,dir_dest,oldfilename):
     newfilename = oldfilename
     index = 1
@@ -70,7 +68,6 @@ def renameIfNecesary(dir_src,dir_dest,oldfilename):
                 index += 1
             else:
                 break
-    os.rename(dir_src+'\\'+oldfilename, dir_src+'\\'+newfilename)
     return newfilename
 
 if __name__ == '__main__':  # goes over all files in source folder. not involving watchdog
