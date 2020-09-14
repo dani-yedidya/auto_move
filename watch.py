@@ -36,7 +36,7 @@ def main():
 
     # create an observer:
     path = source_folder
-    go_recursively = True  # monitor also sub-directories
+    go_recursively = False  # don't monitor also sub-directories, it causes issues..
     my_observer = Observer()
     my_observer.schedule(my_event_handler, path, recursive=go_recursively)
 
