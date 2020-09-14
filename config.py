@@ -1,6 +1,7 @@
 import sys
 import json
 import os
+from pathlib import Path
 
 # TODO: matybe we should add a change destination and source folder here.(.py=>.txt). DONE
 # TODO: make it easier to change without needing to know how to code. DONE
@@ -69,6 +70,7 @@ def add():
     if isThereDup:
         print('There is already a function named ' + name + '\n')
         add()  # אהבתי
+        return
     else:
         fun_options = {1: 'endswith', 2: 'startswith'}  # **can add more options if we use more functions, like regex**
         print("Choose function:")
@@ -98,7 +100,10 @@ def add():
         print("Enter destination (e.g: C:\\Users\\yedid\\OneDrive\\Documents):")
         des = input()
         action = {'name': name, 'key': type, 'destination': des}
-
+        if not check_or_created(Path(des)): #if parent folder is invalid
+            print('Invalid path')
+            add()
+            return
         with open(settingsFile, 'r') as f:  # open file and edit settings
             settings_json = json.load(f)
             if fun in settings_json:
@@ -160,6 +165,10 @@ def runfun(ans):
 def change_dir(type):  # type 1 - source folder, type 2 - default dest
     print("Enter new path (e.g: C:\\Users\\yedid\\OneDrive\\Documents): ")
     path = input()
+    if not check_or_created(Path(path)):  # if parent folder is invalid
+        print('Invalid path')
+        change_dir(type)
+        return
     with open(settingsFile, 'r')as f:
         read = json.load(f)
     if type == 1:
@@ -190,6 +199,18 @@ def reset_all():
         print("syntax error. ")
         reset_all()
 
+def check_or_created(src):
+    #fun that checks if directory is created, if not creates it.
+    # returns boolean- is the folder ok?
+    path = Path(src)
+    if path.is_dir(): #path is legit
+        return True
+    elif path.parent.is_dir(): #parent path is legit, create a dir:
+        os.mkdir(path)
+        print("created folder: "+str(path))
+        return True
+    else:
+        return False
 
 while True:
     ans = input()

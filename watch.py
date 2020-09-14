@@ -13,6 +13,8 @@ def on_created(event):
 
     get file name from event, then runs move file function from move_files/sefaria
     """
+    if os.path.isdir(event.src_path): #Don't do anything if file is a folder.
+        return
     time.sleep(1)
     file_name = event.src_path.split("\\")[-1]  # gets file name from event called by observer
     move_file(source_folder, file_name)
