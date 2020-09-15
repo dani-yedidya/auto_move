@@ -51,24 +51,39 @@ def sivug(file_name: str):
     return destination  # if nothing was found מתאים  - default destination
 
 
-def move_file(src, filename):
-    dest = sivug(filename)
-
+def move_file(src, filename, func=sivug, rename_option=True):
+    """
+    moves the file from source folder to desired destination folder.
+    :param src: {str} source folder, taken from setting.txt
+    :param filename: {str} filename of file to be moved
+    :param func: option for sefaria.py module decorated sivug function: elis_sivug.
+    :param rename_option: while using sefaria.py, renaming must be canceled because new dest
+     includes the desired new file name.
+    :return: None. just moves the file and maybe renames it.
+    """
+    dest = func(filename)
     # Check if there is already a file like this
-    newfilename = renameIfNecesary(src,dest,filename)
+    if rename_option:
+        newfilename = "\\" + rename_if_necessary(src, dest, filename)
+    else:
+        newfilename = ""
     if dest != source_folder:
-        move(src + '\\' + filename, dest+'\\'+newfilename)
-def renameIfNecesary(dir_src,dir_dest,oldfilename):
+        move(src + '\\' + filename, dest + newfilename)
+
+
+def rename_if_necessary(dir_src, dir_dest, oldfilename):
     newfilename = oldfilename
     index = 1
-    if (path.exists(dir_dest+'\\'+newfilename)):
+    if (path.exists(dir_dest + '\\' + newfilename)):
         while True:
-            if (path.exists(dir_src+'\\'+newfilename) or path.exists(dir_dest+'\\'+newfilename)):
-                newfilename = os.path.splitext(oldfilename)[0] + ' (' + str(index) + ')' +os.path.splitext(oldfilename)[1]
+            if path.exists(dir_src + '\\' + newfilename) or path.exists(dir_dest + '\\' + newfilename):
+                newfilename = os.path.splitext(oldfilename)[0] + ' (' + str(index) + ')' + \
+                              os.path.splitext(oldfilename)[1]
                 index += 1
             else:
                 break
     return newfilename
+
 
 if __name__ == '__main__':  # goes over all files in source folder. not involving watchdog
     _, _, filenames = next(os.walk(source_folder), (None, None, []))

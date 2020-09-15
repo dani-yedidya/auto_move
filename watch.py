@@ -3,11 +3,14 @@ from watchdog.observers import Observer
 from watchdog.events import PatternMatchingEventHandler
 from move_files import *
 
+# from sefaria import *
+
 """ move_files is the original program. If there is no need to rename file, use this import and
 comment out sefaria"""
+"""
+COMMENT OUT ON_MOVED OPTION IN MY_EVENT_HANDLER IF YOU ARE YEDIDYA!!!!
+"""
 
-
-# from sefaria import *
 # life cycle of chrome/firfox file:
 # 1. created sample.crdownload file (oncreated called, but nothing happens cause of 'if' statement)
 # 2. moved: src= sample.crdownload, dest = sample.temp  (onmoved called, but nothing happens cause of 'if' statement)
@@ -23,7 +26,7 @@ def on_created(event):
     # check if file is a temp file, and do nothing if so.
     if str(event.src_path).endswith((".crdownload", ".tmp")):
         return
-    move(event.src_path) #calls the move function with path
+    move(event.src_path)  # calls the move function with path
 
     """
     :param event: watchdogevent type
@@ -32,15 +35,16 @@ def on_created(event):
     """
 
 
-
 def on_moved(event):
+    # not used for Yedidya because downloads work differently
     # check if file is a temp file, and do nothing if so.
-    if str(event.dest_path).endswith((".crdownload", ".tmp")):
+    if str(event.dest_path).endswith((".crdownload", ".tmp")) or event.dest_path == event.src_path:
         return
-    move(event.dest_path) #Calls the move fun with DEST. this is because it is called AFTER it moved.
+    move(event.dest_path)  # Calls the move fun with DEST. this is because it is called AFTER it moved.
+
 
 def move(src_path):
-    #this function moves file using move_file.py
+    # this function moves file using move_file.py
     # PARAMS : path of file that is defined by event
 
     if os.path.isdir(src_path):  # Don't do anything if file is a folder.
@@ -48,7 +52,6 @@ def move(src_path):
     time.sleep(1)
     file_name = src_path.split("\\")[-1]  # gets file name from event called by observer
     move_file(source_folder, file_name)
-
 
 
 def main():
@@ -64,13 +67,13 @@ def main():
     my_event_handler = PatternMatchingEventHandler(patterns, ignore_patterns, ignore_directories, case_sensitive)
     # initialize all events according to functions we made:
     my_event_handler.on_created = on_created
-    my_event_handler.on_moved = on_moved
+    my_event_handler.on_moved = on_moved  # commented when on Yedidya's computer because it's unnecessary.
 
     # create an observer:
-    path = source_folder
+    src = source_folder
     go_recursively = False  # don't monitor also sub-directories, it causes issues..
     my_observer = Observer()
-    my_observer.schedule(my_event_handler, path, recursive=go_recursively)
+    my_observer.schedule(my_event_handler, src, recursive=go_recursively)
 
     my_observer.start()
     try:

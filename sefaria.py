@@ -4,6 +4,7 @@ import move_files
 from move_files import source_folder
 import tkinter as tk
 from functools import partial
+import os  # needed for watch.py, do not remove.
 
 
 def daf_yomi():
@@ -40,23 +41,21 @@ class Entry_Box(tk.Frame):
         self.pack(side="bottom")
         # self.master = master
 
-
     def confirmation(self):
-        self.label = tk.Label(self, text = Entry_Box.string +". Confirm?")
+        self.label = tk.Label(self, text=Entry_Box.string + ". Confirm?")
         self.label.pack(side="top")
         self.yes_button = tk.Button(self, text='Yes', command=partial(self.yes, None))
         self.no_button = tk.Button(self, text='No', command=partial(self.no, None))
-        self.yes_button.pack(side = "left")
-        self.no_button.pack(side = "right")
+        self.yes_button.pack(side="left")
+        self.no_button.pack(side="right")
         self.root.bind('<Return>', self.yes)
         self.root.mainloop()
 
-
-    def yes(self,event):
+    def yes(self, event):
         self.destroy()
         self.root.destroy()
 
-    def no(self,event):
+    def no(self, event):
         self.label.destroy()
         self.yes_button.destroy()
         self.no_button.destroy()
@@ -81,6 +80,7 @@ def elis_sivug(func):  # decorator for sivug function
     :param func: sivug function (move_files.py)
     :return: str: destinanion folder, or in case of WhatsApp audio - destinaion filename (whole path).
     '''
+
     def wrapper(*args, **kwargs):
         dest_file = func(*args, **kwargs)
         if args[0].endswith('.ogg') and args[0].startswith('WhatsApp'):
@@ -91,21 +91,15 @@ def elis_sivug(func):  # decorator for sivug function
             GUI.confirmation()
             GUI.root.mainloop()
             daf = Entry_Box.string  # getting todays page from sefaria
-            return  dest_file + '\\' + daf + '.ogg'  # renaming file. should add confirmation GUI
+            return dest_file + '\\' + daf + '.ogg'  # renaming file. should add confirmation GUI
         else:
             return dest_file
+
     return wrapper
 
 
-
-def move_file(src, filename): # new function to use decorated sivug, create tkinter GUI
-
-    sivug = elis_sivug(move_files.sivug)  # decorating the sivug function
-    dest = sivug(filename)
-    if dest != source_folder:
-        move(src + '\\' + filename, dest)
-
-
+def move_file(src, filename):  # new function to use decorated sivug, create tkinter GUI
+    move_files.move_file(src, filename, func=elis_sivug(move_files.sivug), rename_option=False)
 
 
 if __name__ == '__main__':
